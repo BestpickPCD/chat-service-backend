@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 import config from "./config.ts";
 export const prisma = new PrismaClient();
 const { db } = config;
-const connectionString = `mongodb+srv://${db.username}:${db.password}@${db.host}/${db.database}?retryWrites=true&w=majority`;
-console.log(connectionString);
+const connectionString = `mongodb+srv://${db.username}:${db.password}@${db.host}/${db.database}`;
 
 export const connectToPrismaDatabase = async () => {
   try {
