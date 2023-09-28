@@ -1,18 +1,28 @@
 import express from "express";
-const router = express.Router();
+import multer from "multer";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import { uploadPath } from "../../uploads/upload.url.ts";
 import {
   createRoom,
+  getAllRoom,
   getMessage,
   saveMessage,
-  getAllRoom,
 } from "../controllers/chat.controller.ts";
 import { asyncHandler } from "../utils/helpers/asyncHandler.ts";
-import multer from "multer";
-import path from "path";
+const router = express.Router();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+console.log(path.join(
+  __dirname, ""
+), uploadPath);
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // save images to the 'uploads/' directory
+    cb(null,  "uploads/");
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)); // unique filename

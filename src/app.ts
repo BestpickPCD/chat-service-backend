@@ -4,10 +4,10 @@ import express, { NextFunction, Request, Response } from "express";
 import { default as helmet } from "helmet";
 import morgan from "morgan";
 import { createServer } from "node:http";
-import path from "node:path";
 import { dirname } from "path";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
+import { uploadPath } from "../uploads/upload.url.ts";
 import { instanceMongodb } from "./config/database.ts";
 import router from "./routes/index.ts";
 
@@ -26,15 +26,11 @@ app.use(express.json());
 app.use(
   "/uploads",
   express.static(
-    path.join(
-      __dirname
-        .split("/")
-        .filter((char) => char !== "src")
-        .join("/"),
-      "uploads"
-    )
+   uploadPath
   )
 );
+console.log(  __dirname, "uploads", 123);
+
 app.use(compression());
 
 //router
