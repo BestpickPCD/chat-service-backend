@@ -11,14 +11,6 @@ import {
 } from "../controllers/chat.controller.ts";
 import { asyncHandler } from "../utils/helpers/asyncHandler.ts";
 const router = express.Router();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-
-console.log(path.join(
-  __dirname, ""
-), uploadPath);
-
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

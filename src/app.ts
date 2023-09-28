@@ -29,7 +29,6 @@ app.use(
    uploadPath
   )
 );
-console.log(  __dirname, "uploads", 123);
 
 app.use(compression());
 
