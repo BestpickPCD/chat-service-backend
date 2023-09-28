@@ -23,13 +23,7 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  "/uploads",
-  express.static(
-   uploadPath
-  )
-);
-console.log(  __dirname, "uploads", 123);
+app.use("/uploads", express.static(uploadPath));
 
 app.use(compression());
 
@@ -59,15 +53,23 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
+interface Messages {
+  [key: string]: any;
+}
+let newMessage: Messages = {};
 io.on("connection", (socket) => {
   socket.on("add-user", (data) => {
     socket.join(data.roomId);
   });
-  socket.on("messages", (data) => {
-    console.log(data);
 
+  socket.on("messages", (data) => {
     io.to(String(data.roomId)).emit("messages-back", data);
+  });
+
+  socket.on("new-messages", (data) => {
+    // newMessage = { ...newMessage, ...data };
+    console.log(Object.keys(data)[0]);
+    io.to(Object.keys(data)[0]).emit("new-message", data);
   });
 });
 

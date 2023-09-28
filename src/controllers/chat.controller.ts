@@ -3,6 +3,7 @@ import { OK } from "../core/success.response.ts";
 import Messages from "../models/message.model.ts";
 import Rooms from "../models/room.model.ts";
 import { BadRequestError } from "../core/error.response.ts";
+import { Types } from "mongoose";
 
 const createRoom = async (req: Request, res: Response) => {
   let data;
@@ -19,11 +20,29 @@ const createRoom = async (req: Request, res: Response) => {
         userId: Number(req.body.id),
         username: req.body?.name,
         guess: req.body?.Players?.agent?.user,
+        newGuestMessages: 0,
+        newUserMessages: 0,
       });
     }
     return new OK({ data, message: "Create room success" }).send(res);
   }
   return new BadRequestError("Some thing wrong");
+};
+
+const updateRoom = async (req: Request, res: Response) => {
+  const { newGuestMessages, newUserMessages, roomId } = req.body;
+  console.log(newGuestMessages, newUserMessages, roomId);
+  console.log(req.body);
+
+  const updated = await Rooms.findByIdAndUpdate(new Types.ObjectId(roomId), {
+    ...(Number.isInteger(newGuestMessages) && {
+      newGuestMessages: Number(newGuestMessages),
+    }),
+    ...(Number.isInteger(newUserMessages) && {
+      newUserMessages: Number(newUserMessages),
+    }),
+  });
+  return new OK({ data: updated, message: "Create room success" }).send(res);
 };
 
 const getAllRoom = async (req: Request, res: Response) => {
@@ -35,9 +54,7 @@ const getAllRoom = async (req: Request, res: Response) => {
 
 const saveMessage = async (req: Request, res: Response) => {
   const image = (req.files as any[])?.map((item: any) => {
-    console.log(item);
-    
-    return item.path
+    return item.path;
   });
   if (req.body.roomId) {
     const data = await Messages.create({
@@ -62,4 +79,4 @@ const getMessage = async (req: Request, res: Response) => {
   return new OK({ data, message: "get message success" }).send(res);
 };
 
-export { createRoom, getMessage, saveMessage, getAllRoom };
+export { createRoom, getMessage, saveMessage, getAllRoom, updateRoom };

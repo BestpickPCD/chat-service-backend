@@ -21,6 +21,14 @@ const RoomSchema = new Schema<IRoom>(
     },
     username: String,
     guess: Schema.Types.Mixed,
+    newGuestMessages: {
+      type: Number,
+      default: 0,
+    },
+    newUserMessages: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

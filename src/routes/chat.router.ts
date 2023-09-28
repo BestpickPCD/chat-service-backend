@@ -8,21 +8,18 @@ import {
   getAllRoom,
   getMessage,
   saveMessage,
+  updateRoom,
 } from "../controllers/chat.controller.ts";
 import { asyncHandler } from "../utils/helpers/asyncHandler.ts";
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-
-console.log(path.join(
-  __dirname, ""
-), uploadPath);
-
+console.log(path.join(__dirname, ""), uploadPath);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null,  "uploads/");
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname)); // unique filename
@@ -33,6 +30,7 @@ const upload = multer({ storage: storage });
 
 router.get("/rooms", asyncHandler(getAllRoom));
 router.post("/rooms", asyncHandler(createRoom));
+router.put("/rooms", asyncHandler(updateRoom));
 
 router.get("/messages", asyncHandler(getMessage));
 router.post("/messages", upload.array("image", 12), asyncHandler(saveMessage));

@@ -30,6 +30,8 @@ interface IRoom {
   username: String;
   guess: any;
   id: number;
+  newGuestMessages: number;
+  newUserMessages: number;
 }
 
 interface IMessage {
