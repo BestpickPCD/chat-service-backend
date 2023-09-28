@@ -1,0 +1,32 @@
+
+@url_dev = http://localhost:8080/api/v1
+
+### Register
+POST {{url_dev}}/user/register HTTP/1.1
+content-type: application/json
+x-api-key: 2b12844f5544f656b189a3fcf14a0ac3c58339fab5049766e6ade8d0cd82ac242b158587fefe7b968c984bc0bf469375419f294022062e3850654a4b181e2de2
+
+{"name": "admin", "password": "admin", "email":"1@example.com"}
+
+
+###
+POST {{url_dev}}/user/login HTTP/1.1
+content-type: application/json
+x-api-key: 2b12844f5544f656b189a3fcf14a0ac3c58339fab5049766e6ade8d0cd82ac242b158587fefe7b968c984bc0bf469375419f294022062e3850654a4b181e2de2
+
+{"name": "admin", "password": "admin", "email":"1@example.com"}
+
+###
+GET {{url_dev}}/user/logout HTTP/1.1
+content-type: application/json
+x-api-key: f918f8fadb112e844cd95306b607d72f840873ceb84e3c3e55f9e4176fcde6516a1652dd0b168e7f719c66ba629f53e736f7b272bf4dc8dd913556954d8bc852
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTAzZGRhZmFkZDBkNmMwZTQxYjhhOGQiLCJlbWFpbCI6IjFAZXhhbXBsZS5jb20iLCJpYXQiOjE2OTQ3NTIzMDksImV4cCI6MTY5NDkyNTEwOX0.BLM3CBHvIvNkx3V2APZz7hC-4642M5HKH9Pw5eRGMNg
+x-client-id: 6503ddafadd0d6c0e41b8a8d
+ 
+###
+POST {{url_dev}}/user/refresh-token HTTP/1.1
+content-type: application/json
+x-api-key: f918f8fadb112e844cd95306b607d72f840873ceb84e3c3e55f9e4176fcde6516a1652dd0b168e7f719c66ba629f53e736f7b272bf4dc8dd913556954d8bc852
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTAzZGRhZmFkZDBkNmMwZTQxYjhhOGQiLCJlbWFpbCI6IjFAZXhhbXBsZS5jb20iLCJpYXQiOjE2OTQ3Njg1NTgsImV4cCI6MTY5NDk0MTM1OH0.diWXMtV9hPhL8wbiPwKWV2ccu_AfqmDxIypmsp6HRyE
+x-client-id: 6503ddafadd0d6c0e41b8a8d
+refresh-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTAzZGRhZmFkZDBkNmMwZTQxYjhhOGQiLCJlbWFpbCI6IjFAZXhhbXBsZS5jb20iLCJpYXQiOjE2OTQ3NzEzMDcsImV4cCI6MTY5NDk0NDEwN30.mcEdhiojvacsprcVGNGdApiiecVektpb13o2MYwl9zI
