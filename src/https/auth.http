@@ -1,5 +1,5 @@
 
-@url_dev = http://localhost:8080/api/v1
+@url_dev = https://chat-service-backend.onrender.com/api/v1
 
 ### Register
 POST {{url_dev}}/user/register HTTP/1.1

@@ -35,7 +35,6 @@ const getAllRoom = async (req: Request, res: Response) => {
 
 const saveMessage = async (req: Request, res: Response) => {
   const image = (req.files as any[])?.map((item: any) => {
-    console.log(item);
     
     return item.path
   });
