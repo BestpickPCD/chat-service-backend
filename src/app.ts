@@ -4,17 +4,13 @@ import express, { NextFunction, Request, Response } from "express";
 import { default as helmet } from "helmet";
 import morgan from "morgan";
 import { createServer } from "node:http";
-import { dirname } from "path";
 import { Server } from "socket.io";
-import { fileURLToPath } from "url";
 import { uploadPath } from "../uploads/upload.url.ts";
 import { instanceMongodb } from "./config/database.ts";
 import router from "./routes/index.ts";
 
 const app = express();
 const server = createServer(app);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 instanceMongodb;
 
 //init middleware
@@ -48,7 +44,7 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 //
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3100",
+    origin: ["http://localhost:3100", "https://user-demo-frontend.vercel.app"],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -70,6 +66,10 @@ io.on("connection", (socket) => {
     // newMessage = { ...newMessage, ...data };
     console.log(Object.keys(data)[0]);
     io.to(Object.keys(data)[0]).emit("new-message", data);
+  });
+
+  socket.on("sent-or-seen", (data) => {
+    io.to(data.roomId).emit("sent-or-seen", data);
   });
 });
 

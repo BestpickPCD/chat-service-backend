@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
+import fs from "fs";
+import { Types } from "mongoose";
+import path from "path";
+import sharp from "sharp";
+import { BadRequestError } from "../core/error.response.ts";
 import { OK } from "../core/success.response.ts";
 import Messages from "../models/message.model.ts";
 import Rooms from "../models/room.model.ts";
-import { BadRequestError } from "../core/error.response.ts";
-import { Types } from "mongoose";
 
 const createRoom = async (req: Request, res: Response) => {
   let data;
@@ -31,8 +34,6 @@ const createRoom = async (req: Request, res: Response) => {
 
 const updateRoom = async (req: Request, res: Response) => {
   const { newGuestMessages, newUserMessages, roomId } = req.body;
-  console.log(newGuestMessages, newUserMessages, roomId);
-  console.log(req.body);
 
   const updated = await Rooms.findByIdAndUpdate(new Types.ObjectId(roomId), {
     ...(Number.isInteger(newGuestMessages) && {
@@ -53,14 +54,52 @@ const getAllRoom = async (req: Request, res: Response) => {
 };
 
 const saveMessage = async (req: Request, res: Response) => {
-  const image = (req.files as any[])?.map((item: any) => {
-    return item.path;
+  const images = (req.files as any[])?.map((item: any) => {
+    return item;
   });
+  const fileFormatAccepted = ["csv", "xlsx", "xls", "docx", "text"];
+
+  const receivedFiles = images.filter((item) =>
+    fileFormatAccepted.includes(item?.originalname?.split(".")?.pop())
+  );
+  const receivedImages = images.filter(
+    (item) =>
+      !fileFormatAccepted.includes(item?.originalname?.split(".")?.pop())
+  );
+
+  const compressedImages = await Promise.all(
+    receivedImages.map(async (item: any) => {
+      try {
+        console.log(item);
+
+        const compressedImageName = `new_${item.filename}`;
+        const imagePath = path.join("uploads", compressedImageName);
+        const newImage = await sharp(item.path)
+          .png({ quality: 100, compressionLevel: 1 })
+          .toFile(imagePath);
+        fs.unlinkSync(item.path);
+        console.log({ newImage, image: item });
+
+        return imagePath;
+      } catch (err) {
+        console.error("Error compressing image:", err);
+        throw new BadRequestError("Could not compress image");
+      }
+    })
+  );
+
   if (req.body.roomId) {
     const data = await Messages.create({
       ...req.body,
-      image,
+      images: compressedImages,
+      files: [
+        ...receivedFiles.map((item) => ({
+          name: item.originalname,
+          path: item.path,
+        })),
+      ],
     });
+
     return new OK({
       message: "Save success",
       data,
@@ -79,4 +118,7 @@ const getMessage = async (req: Request, res: Response) => {
   return new OK({ data, message: "get message success" }).send(res);
 };
 
-export { createRoom, getMessage, saveMessage, getAllRoom, updateRoom };
+export { createRoom, getAllRoom, getMessage, saveMessage, updateRoom };
+
+1696500074639;
+1696500074639;

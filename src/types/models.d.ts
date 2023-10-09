@@ -37,7 +37,8 @@ interface IRoom {
 interface IMessage {
   text: string;
   oldText: string;
-  image: any;
+  images: any;
+  files: any;
   oldImage: string;
   reaction: string;
   hasRead: boolean;
