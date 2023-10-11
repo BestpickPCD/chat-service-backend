@@ -54,35 +54,28 @@ const getAllRoom = async (req: Request, res: Response) => {
 };
 
 const saveMessage = async (req: Request, res: Response) => {
-  const images = (req.files as any[])?.map((item: any) => {
+  const files: any = (req.files as any[])?.map((item: any) => {
     return item;
   });
-  const fileFormatAccepted = ["csv", "xlsx", "xls", "docx", "text"];
+  const fileFormatAccepted = ["csv", "xlsx", "xls", "docx", "text", "txt"];
+  const imageFormatAccepted = ["png", "jpg", "gif", "jpeg", "heic", "tiff"];
 
-  const receivedFiles = images.filter((item) =>
+  const receivedFiles = files.filter((item: any) =>
     fileFormatAccepted.includes(item?.originalname?.split(".")?.pop())
   );
-  const receivedImages = images.filter(
-    (item) =>
-      !fileFormatAccepted.includes(item?.originalname?.split(".")?.pop())
+  const receivedImages = files.filter((item: any) =>
+    imageFormatAccepted.includes(item?.originalname?.split(".")?.pop())
   );
 
   const compressedImages = await Promise.all(
     receivedImages.map(async (item: any) => {
       try {
-        console.log(item);
-
         const compressedImageName = `new_${item.filename}`;
         const imagePath = path.join("uploads", compressedImageName);
-        const newImage = await sharp(item.path)
-          .png({ quality: 100, compressionLevel: 1 })
-          .toFile(imagePath);
+        await sharp(item.path).png({ quality: 80 }).toFile(imagePath);
         fs.unlinkSync(item.path);
-        console.log({ newImage, image: item });
-
         return imagePath;
       } catch (err) {
-        console.error("Error compressing image:", err);
         throw new BadRequestError("Could not compress image");
       }
     })
@@ -93,7 +86,7 @@ const saveMessage = async (req: Request, res: Response) => {
       ...req.body,
       images: compressedImages,
       files: [
-        ...receivedFiles.map((item) => ({
+        ...receivedFiles.map((item: any) => ({
           name: item.originalname,
           path: item.path,
         })),

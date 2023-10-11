@@ -44,7 +44,11 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 //
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3100", "https://user-demo-frontend.vercel.app"],
+    origin: [
+      "http://localhost:3100",
+      "https://user-demo-frontend.vercel.app",
+      "http://localhost:3000",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
