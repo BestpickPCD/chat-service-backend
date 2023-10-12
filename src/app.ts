@@ -4,17 +4,13 @@ import express, { NextFunction, Request, Response } from "express";
 import { default as helmet } from "helmet";
 import morgan from "morgan";
 import { createServer } from "node:http";
-import { dirname } from "path";
 import { Server } from "socket.io";
-import { fileURLToPath } from "url";
 import { uploadPath } from "../uploads/upload.url.ts";
 import { instanceMongodb } from "./config/database.ts";
 import router from "./routes/index.ts";
 
 const app = express();
 const server = createServer(app);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 instanceMongodb;
 
 //init middleware
@@ -23,12 +19,7 @@ app.use(morgan("dev"));
 app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(
-  "/uploads",
-  express.static(
-   uploadPath
-  )
-);
+app.use("/uploads", express.static(uploadPath));
 
 app.use(compression());
 
@@ -53,20 +44,36 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
 //
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3100",
+    origin: [
+      "http://localhost:3100",
+      "https://user-demo-frontend.vercel.app",
+      "http://localhost:3000",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
-
+interface Messages {
+  [key: string]: any;
+}
+let newMessage: Messages = {};
 io.on("connection", (socket) => {
   socket.on("add-user", (data) => {
     socket.join(data.roomId);
   });
-  socket.on("messages", (data) => {
-    console.log(data);
 
+  socket.on("messages", (data) => {
     io.to(String(data.roomId)).emit("messages-back", data);
+  });
+
+  socket.on("new-messages", (data) => {
+    // newMessage = { ...newMessage, ...data };
+    console.log(Object.keys(data)[0]);
+    io.to(Object.keys(data)[0]).emit("new-message", data);
+  });
+
+  socket.on("sent-or-seen", (data) => {
+    io.to(data.roomId).emit("sent-or-seen", data);
   });
 });
 

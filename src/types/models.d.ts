@@ -30,12 +30,15 @@ interface IRoom {
   username: String;
   guess: any;
   id: number;
+  newGuestMessages: number;
+  newUserMessages: number;
 }
 
 interface IMessage {
   text: string;
   oldText: string;
-  image: any;
+  images: any;
+  files: any;
   oldImage: string;
   reaction: string;
   hasRead: boolean;

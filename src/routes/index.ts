@@ -1,10 +1,53 @@
 import express from "express";
-import chatRouter from "./chat.router.ts";
+import multer from "multer";
+import path from "path";
+import {
+  createRoom,
+  getAllRoom,
+  getMessage,
+  saveMessage,
+  updateRoom,
+} from "../controllers/chat.controller.ts";
+import { asyncHandler } from "../utils/helpers/asyncHandler.ts";
 const router = express.Router();
 
-// router.use("/user", user);
-router.use("", chatRouter);
-// router.use(apiKey);
-// router.use(permission("0000") as any);
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "uploads/");
+  },
+  filename: function (req, file, callback) {
+    callback(null, Date.now() + path.extname(file.originalname));
+  },
+});
 
+const upload = multer({
+  storage: storage,
+  fileFilter: function (req, file, callback) {
+    var ext = path.extname(file.originalname);
+    if (
+      ext !== ".png" &&
+      ext !== ".jpg" &&
+      ext !== ".gif" &&
+      ext !== ".jpeg" &&
+      ext !== ".heic" &&
+      ext !== ".tiff" &&
+      ext !== ".csv" &&
+      ext !== ".xlsx" &&
+      ext !== ".xls" &&
+      ext !== ".docx" &&
+      ext !== ".text" &&
+      ext !== ".txt"
+    ) {
+      return callback(null, false);
+    }
+    callback(null, true);
+  },
+});
+
+router.get("/rooms", asyncHandler(getAllRoom));
+router.post("/rooms", asyncHandler(createRoom));
+router.put("/rooms", asyncHandler(updateRoom));
+
+router.get("/messages", asyncHandler(getMessage));
+router.post("/messages", upload.array("image", 12), asyncHandler(saveMessage));
 export default router;
