@@ -8,7 +8,7 @@ const NAME = {
 const RoomSchema = new Schema<IRoom>(
   {
     userId: {
-      type: Number,
+      type: String,
       required: true,
       unique: true,
       ref: "User",

@@ -23,13 +23,13 @@ interface IUser {
 }
 
 interface IRoom {
-  userId: Number;
+  userId: string;
   message: string;
   image: string;
   users: Types.Array;
   username: String;
   guess: any;
-  id: number;
+  id: string;
   newGuestMessages: number;
   newUserMessages: number;
 }
@@ -46,7 +46,7 @@ interface IMessage {
   isReply: boolean;
   status: string;
   roomId: Types.ObjectId;
-  userId: Number;
+  userId: string;
 }
 
 export { IKeyToken, IApiKey, IUser, IRoom, IMessage };
