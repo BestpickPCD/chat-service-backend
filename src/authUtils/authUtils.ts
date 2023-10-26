@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import JWT from "jsonwebtoken";
+import JWT, { JwtPayload } from "jsonwebtoken";
 import {
   BadRequestError,
   NotFoundRequestError,
@@ -7,6 +7,17 @@ import {
 } from "../core/error.response.ts";
 import KeyTokenService from "../services/tokenKey.service.ts";
 import { asyncHandler } from "../utils/helpers/asyncHandler.ts";
+import Rooms from "../models/room.model.ts";
+
+const message = {
+  KEY_NOT_VALID: "Key is not valid",
+  TOKEN_NOT_VALID: "Token is not valid",
+  TOKEN_MISSING: "Token is missing",
+  TOKEN_EXPIRED: "Token is expired",
+};
+
+const ACCESS_TOKEN_KEY = process.env.ACCESS_TOKEN_KEY ?? "";
+const REFRESH_TOKEN_KEY = process.env.REFRESH_TOKEN_KEY ?? "";
 
 const HEADER = {
   API_KEY: "x-api-key",
@@ -83,6 +94,53 @@ export const authentication = asyncHandler(
       return next();
     } catch (error) {
       throw error;
+    }
+  }
+);
+export const authenticationV2 = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      if (!ACCESS_TOKEN_KEY) {
+        throw new Error(message.KEY_NOT_VALID);
+      }
+
+      const token = String(req?.header("Authorization")).split(" ")[1];
+      if (!token) {
+        throw new Error(message.TOKEN_MISSING);
+      }
+
+      const { userId } = (await verifyToken(
+        token,
+        ACCESS_TOKEN_KEY
+      )) as JwtPayload;
+      const userData = await Rooms.findOne({
+        users: {
+          $in: [userId],
+        },
+      });
+      if (userData) {
+        (req as any).userId = userId;
+        return next();
+      }
+      return next(new UnauthorizeRequestError("UnAuthorized"));
+    } catch (error: any) {
+      if (req.body?.refreshToken) {
+        const { userId } = (await verifyToken(
+          req.body?.refreshToken,
+          REFRESH_TOKEN_KEY
+        )) as JwtPayload;
+        const userData = await Rooms.findOne({
+          users: {
+            $in: [userId],
+          },
+        });
+        if (userData) {
+          (req as any).userId = userId;
+          return next();
+        }
+        return next(new UnauthorizeRequestError(error.message));
+      }
+      return next(new UnauthorizeRequestError(error.message));
     }
   }
 );

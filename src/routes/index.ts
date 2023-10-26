@@ -1,6 +1,7 @@
 import express from "express";
 import multer from "multer";
 import path from "path";
+import { authenticationV2 } from "../authUtils/authUtils.ts";
 import {
   createRoom,
   getAllRoom,
@@ -44,9 +45,9 @@ const upload = multer({
   },
 });
 
-router.get("/rooms", asyncHandler(getAllRoom));
+router.get("/rooms", authenticationV2, asyncHandler(getAllRoom));
 router.post("/rooms", asyncHandler(createRoom));
-router.put("/rooms", asyncHandler(updateRoom));
+router.put("/rooms", authenticationV2, asyncHandler(updateRoom));
 
 router.get("/messages", asyncHandler(getMessage));
 router.post("/messages", upload.array("image", 12), asyncHandler(saveMessage));

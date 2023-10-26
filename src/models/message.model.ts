@@ -8,7 +8,7 @@ const NAME = {
 const MessageSchema = new Schema<IMessage>(
   {
     userId: {
-      type: Number,
+      type: String,
       ref: "User",
     },
     text: String,

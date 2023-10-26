@@ -14,41 +14,43 @@ const createRoom = async (req: Request, res: Response) => {
     data = await Rooms.findOne({
       userId: String(req.body.id),
     });
+
     if (!data) {
-      if (!req?.body?.Players?.agentId) {
-        return new BadRequestError("Some thing wrong");
+      if (!req?.body?.parent?.id) {
+        throw new BadRequestError("Some thing wrong");
       }
       data = await Rooms.create({
-        users: [req.body.id, req.body.Players.agentId],
-        userId: Number(req.body.id),
+        users: [req.body.id, req?.body?.parent?.id],
+        userId: req.body.id,
         username: req.body?.name,
-        guess: req.body?.Players?.agent?.user,
+        guess: req?.body?.parent,
         newGuestMessages: 0,
         newUserMessages: 0,
       });
     }
     return new OK({ data, message: "Create room success" }).send(res);
   }
-  return new BadRequestError("Some thing wrong");
+  throw new BadRequestError("Some thing wrong");
 };
 
 const updateRoom = async (req: Request, res: Response) => {
   const { newGuestMessages, newUserMessages, roomId } = req.body;
 
-  const updated = await Rooms.findByIdAndUpdate(new Types.ObjectId(roomId), {
-    ...(Number.isInteger(newGuestMessages) && {
-      newGuestMessages: Number(newGuestMessages),
-    }),
-    ...(Number.isInteger(newUserMessages) && {
-      newUserMessages: Number(newUserMessages),
-    }),
-  });
-  return new OK({ data: updated, message: "Create room success" }).send(res);
+  const updated = await Rooms.findOneAndUpdate(
+    {
+      _id: roomId,
+    },
+    {
+      newGuestMessages: Number(newGuestMessages) || 0,
+      newUserMessages: Number(newUserMessages) || 0,
+    }
+  );
+  return new OK({ data: updated, message: "Update room success" }).send(res);
 };
 
 const getAllRoom = async (req: Request, res: Response) => {
   const rooms = await Rooms.find({
-    users: { $in: 1 },
+    users: { $in: (req as any).userId },
   });
   return new OK({ data: rooms, message: "get all rooms success" }).send(res);
 };
@@ -102,7 +104,7 @@ const saveMessage = async (req: Request, res: Response) => {
 
 const getMessage = async (req: Request, res: Response) => {
   const room = await Rooms.findOne({
-    userId: Number(req.query.id),
+    userId: req.query.id,
   });
 
   const data = await Messages.find({
