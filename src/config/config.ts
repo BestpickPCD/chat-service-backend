@@ -1,6 +1,6 @@
 const dev = {
   app: {
-    PORT: process.env.DEV_PORT || 8080,
+    PORT: process.env.DEV_PORT || 8000,
   },
   db: {
     username: process.env.DEV_USERNAME || "root",
@@ -12,7 +12,7 @@ const dev = {
 
 const prod = {
   app: {
-    PORT: process.env.PROD_PORT || 8080,
+    PORT: process.env.PROD_PORT || 8000,
   },
   db: {
     username: process.env.PROD_USERNAME || "root",
