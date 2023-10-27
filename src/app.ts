@@ -49,6 +49,8 @@ const io = new Server(server, {
       "https://user-demo-frontend.vercel.app",
       "http://localhost:3000",
       "http://localhost:3200",
+      "http://143.198.223.9:8080",
+      "http://143.198.223.9"
     ],
     methods: ["GET", "POST"],
     credentials: true,
