@@ -3,9 +3,13 @@ import multer from "multer";
 import path from "path";
 import { authenticationV2 } from "../authUtils/authUtils.ts";
 import {
+  checkUser,
   createRoom,
+  generateRefreshToken,
   getAllRoom,
   getMessage,
+  getRoom,
+  login,
   saveMessage,
   updateRoom,
 } from "../controllers/chat.controller.ts";
@@ -45,10 +49,20 @@ const upload = multer({
   },
 });
 
+router.post("/login", asyncHandler(login));
+router.post("/check-user", asyncHandler(checkUser));
+router.post("/refresh-token", asyncHandler(generateRefreshToken));
+
 router.get("/rooms", authenticationV2, asyncHandler(getAllRoom));
-router.post("/rooms", asyncHandler(createRoom));
+router.get("/rooms/:id", authenticationV2, asyncHandler(getRoom));
+router.post("/rooms", authenticationV2, asyncHandler(createRoom));
 router.put("/rooms", authenticationV2, asyncHandler(updateRoom));
 
-router.get("/messages", asyncHandler(getMessage));
-router.post("/messages", upload.array("image", 12), asyncHandler(saveMessage));
+router.get("/messages", authenticationV2, asyncHandler(getMessage));
+router.post(
+  "/messages",
+  authenticationV2,
+  upload.array("image", 12),
+  asyncHandler(saveMessage)
+);
 export default router;

@@ -97,6 +97,7 @@ export const authentication = asyncHandler(
     }
   }
 );
+
 export const authenticationV2 = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -113,32 +114,17 @@ export const authenticationV2 = asyncHandler(
         token,
         ACCESS_TOKEN_KEY
       )) as JwtPayload;
-      const userData = await Rooms.findOne({
-        users: {
-          $in: [userId],
-        },
-      });
-      if (userData) {
-        (req as any).userId = userId;
-        return next();
-      }
-      return next(new UnauthorizeRequestError("UnAuthorized"));
+
+      (req as any).userId = userId;
+      return next();
     } catch (error: any) {
       if (req.body?.refreshToken) {
         const { userId } = (await verifyToken(
           req.body?.refreshToken,
           REFRESH_TOKEN_KEY
         )) as JwtPayload;
-        const userData = await Rooms.findOne({
-          users: {
-            $in: [userId],
-          },
-        });
-        if (userData) {
-          (req as any).userId = userId;
-          return next();
-        }
-        return next(new UnauthorizeRequestError(error.message));
+        (req as any).userId = userId;
+        return next();
       }
       return next(new UnauthorizeRequestError(error.message));
     }

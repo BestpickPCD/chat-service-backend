@@ -57,24 +57,39 @@ const io = new Server(server, {
 interface Messages {
   [key: string]: any;
 }
-let newMessage: Messages = {};
+let users = {};
+let rooms = {};
 io.on("connection", (socket) => {
   socket.on("add-user", (data) => {
-    socket.join(data.roomId);
+    users = { ...users, [`${data._id}`]: data };
+    console.log(users);
+    socket.join(data._id);
+  });
+
+  socket.on("new-room", (data) => {
+    socket.join(String(data._id));
+    const agents = Object?.values(users)?.filter(
+      (item: any) => item.type === "agent"
+    );
+    console.log(agents);
+
+    if (agents.length) {
+      agents.forEach((item: any) => io.to(String(item._id)).emit("new-room"));
+    }
+  });
+
+  socket.on("new-room-agent", (data) => {
+    if (data.length) {
+      data.forEach((item: any) => socket.join(String(item._id)));
+    }
   });
 
   socket.on("messages", (data) => {
-    io.to(String(data.roomId)).emit("messages-back", data);
+    io.to(String(data.roomId)).emit("messages", data);
   });
 
   socket.on("new-messages", (data) => {
-    // newMessage = { ...newMessage, ...data };
-    console.log(Object.keys(data)[0]);
-    io.to(Object.keys(data)[0]).emit("new-message", data);
-  });
-
-  socket.on("sent-or-seen", (data) => {
-    io.to(data.roomId).emit("sent-or-seen", data);
+    io.to(String(data.roomId)).emit("new-messages");
   });
 });
 

@@ -5,33 +5,35 @@ const NAME = {
   DOCUMENT: "User",
   COLLECTION: "Users",
 };
+
 const UserSchema = new Schema<IUser>(
   {
+    userId: {
+      type: String,
+      unique: true,
+    },
+    userGroup: String,
+    userCode: String,
+    userDomain: String,
     username: {
       type: String,
-      required: true,
       maxLength: 150,
-    },
-    name: {
-      type: String,
-      required: true,
-      maxLength: 150,
-    },
-    email: {
-      type: String,
-      required: true,
       unique: true,
-      index: true,
     },
     password: {
+      type: String,
+      maxlength: 100,
+      select: false,
+    },
+    type: {
       type: String,
       required: true,
     },
   },
   {
     timestamps: true,
-    collection: NAME.COLLECTION,
   }
 );
-const Users = model<IUser>(NAME.DOCUMENT, UserSchema);
+
+const Users = model<IUser>("User", UserSchema);
 export default Users;
