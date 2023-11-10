@@ -26,7 +26,6 @@ const ApiKeySchema = new Schema<IApiKey>(
   },
   {
     timestamps: true,
-    collection: NAME.COLLECTION,
   }
 );
 const ApiKeys = model<IApiKey>(NAME.DOCUMENT, ApiKeySchema);

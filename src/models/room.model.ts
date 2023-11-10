@@ -13,14 +13,6 @@ const RoomSchema = new Schema<IRoom>(
       unique: true,
       ref: "User",
     },
-    users: {
-      type: Schema.Types.Array,
-      ref: "User",
-      default: [],
-      required: true,
-    },
-    username: String,
-    guess: Schema.Types.Mixed,
     newGuestMessages: {
       type: Number,
       default: 0,
@@ -29,11 +21,14 @@ const RoomSchema = new Schema<IRoom>(
       type: Number,
       default: 0,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
-    collection: NAME.COLLECTION,
   }
 );
-const Rooms = model<IRoom>(NAME.DOCUMENT, RoomSchema);
+const Rooms = model<IRoom>("Room", RoomSchema);
 export default Rooms;

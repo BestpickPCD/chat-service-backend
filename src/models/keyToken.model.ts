@@ -11,7 +11,6 @@ const KeyTokenSchema = new Schema<IKeyToken>(
       type: Schema.Types.ObjectId,
       required: true,
       maxLength: 150,
-      ref: "User",
     },
     publicKey: { type: String, required: true },
     privateKey: { type: String, required: true },
@@ -27,7 +26,6 @@ const KeyTokenSchema = new Schema<IKeyToken>(
   },
   {
     timestamps: true,
-    collection: NAME.COLLECTION,
   }
 );
 const KeyTokens = model<IKeyToken>(NAME.DOCUMENT, KeyTokenSchema);

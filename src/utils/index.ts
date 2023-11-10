@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import crypto from "node:crypto";
 const pickKeysInObject = <T extends object, K extends keyof T>({
   object,
@@ -42,4 +43,43 @@ const updateNestedObjectParse = (object: NestedObject): NestedObject => {
   return updatedObject;
 };
 
-export { pickKeysInObject, generateKey, convertArrayToObject };
+const generateTokens = ({
+  id,
+  type,
+}: {
+  id: string;
+  type: string;
+}): {
+  accessToken: string;
+  refreshToken: string;
+} => {
+  // gen access token
+  const accessKey = process.env.ACCESS_TOKEN_KEY as string;
+  const accessToken = jwt.sign(
+    {
+      userId: id,
+      userPosition: type,
+    },
+    accessKey,
+    {
+      expiresIn: `${2}h`,
+    }
+  );
+
+  // gen refresh token
+  const refreshKey = process.env.REFRESH_TOKEN_KEY as string;
+  const refreshToken = jwt.sign(
+    {
+      userId: id,
+      userPosition: type,
+    },
+    refreshKey,
+    {
+      expiresIn: `${7}d`,
+    }
+  );
+
+  return { accessToken, refreshToken };
+};
+
+export { pickKeysInObject, generateKey, convertArrayToObject, generateTokens };

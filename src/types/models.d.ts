@@ -13,15 +13,14 @@ interface IKeyToken {
   refreshToken: string;
 }
 interface IUser {
-  username: string;
-  name: string;
-  email: string;
-  password: string;
-  status: string;
-  verify: boolean;
-  roles: any;
+  userId?: string;
+  username?: string;
+  password?: string;
+  userGroup?: string;
+  userCode?: string;
+  userDomain?: string;
+  type: string;
 }
-
 interface IRoom {
   userId: string;
   message: string;
@@ -32,6 +31,8 @@ interface IRoom {
   id: string;
   newGuestMessages: number;
   newUserMessages: number;
+  owner: string;
+  createdBy: Types.ObjectId;
 }
 
 interface IMessage {
@@ -47,6 +48,7 @@ interface IMessage {
   status: string;
   roomId: Types.ObjectId;
   userId: string;
+  sendBy: string;
 }
 
 export { IKeyToken, IApiKey, IUser, IRoom, IMessage };

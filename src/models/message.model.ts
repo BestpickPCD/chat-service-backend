@@ -22,10 +22,13 @@ const MessageSchema = new Schema<IMessage>(
     isReply: Boolean,
     status: String,
     roomId: Schema.Types.ObjectId,
+    sendBy: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
-    collection: NAME.COLLECTION,
   }
 );
 const Messages = model<IMessage>(NAME.DOCUMENT, MessageSchema);
