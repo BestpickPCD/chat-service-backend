@@ -18,7 +18,6 @@ const UserSchema = new Schema<IUser>(
     username: {
       type: String,
       maxLength: 150,
-      unique: true,
     },
     password: {
       type: String,

@@ -95,8 +95,8 @@ const checkUser = async (req: Request, res: Response) => {
 
         return new OK({ data: { ...result.toObject(), ...tokens } }).send(res);
       })
-      .catch(() => {
-        return new BadRequestError("");
+      .catch((error) => {
+        throw new BadRequestError(error.message || "");
       });
   }
   const tokens = generateTokens({
