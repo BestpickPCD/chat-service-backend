@@ -75,7 +75,7 @@ const generateTokens = ({
     },
     refreshKey,
     {
-      expiresIn: `${7}d`,
+      expiresIn: `${21}d`,
     }
   );
 
